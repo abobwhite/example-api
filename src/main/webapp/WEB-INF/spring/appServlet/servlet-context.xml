@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:cache="http://www.springframework.org/schema/cache"
+  xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+  <!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+
+  <!-- Enables the Spring MVC @Controller programming model -->
+  <annotation-driven>
+    <message-converters register-defaults="true">
+        <beans:bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+          <beans:property name="objectMapper">
+            <beans:bean class="com.daugherty.e2c.service.json.RootWrappingObjectMapper" />
+          </beans:property>
+        </beans:bean>
+    </message-converters>
+  </annotation-driven>
+
+  <context:component-scan base-package="com.daugherty.e2c" />
+
+  <!-- Enables localization based on HTTP header -->
+  <beans:bean id="localeResolver" class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver" />
+  <beans:bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+    <beans:property name="basename" value="locale/messages" />
+    <beans:property name="cacheSeconds" value="0" />
+    <beans:property name="defaultEncoding" value="UTF-8" />
+  </beans:bean>
+
+  <!-- Enforce file upload size limit -->
+  <beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <beans:property name="maxUploadSize" value="10485760" />
+  </beans:bean>
+  
+  <!-- MUST define annotation-driven declarative transactions here so that they get processed by the component scan -->
+  <tx:annotation-driven transaction-manager="transactionManager"/>
+  <beans:bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <beans:property name="dataSource" ref="dataSource" />
+  </beans:bean>
+  
+  <!-- EhCache library setup -->
+  <cache:annotation-driven/>
+  
+  <beans:bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cache-manager-ref="ehcache"></beans:bean>
+
+  <beans:bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:config-location="classpath:ehcache.xml" p:shared="true"></beans:bean>
+ 
+  <!-- Provides TRACE level logging of classes specified in the log4j configuration. -->
+  <beans:bean id="loggingInterceptor" class="com.daugherty.aop.LoggingInterceptor">
+    <beans:property name="excludedClassNames">
+      <beans:list>
+        <beans:value>com.daugherty.profile.MostRecentExecutionsProfiler</beans:value>
+      </beans:list>
+    </beans:property>
+  </beans:bean>
+
+  <!-- Intercepts requests to E2C methods and records execution times for the purposes of profiling -->
+  <beans:bean id="profilingInterceptor" class="com.daugherty.aop.ProfilingInterceptor">
+    <beans:property name="profileRecorder" ref="profiler" />
+  </beans:bean>
+  <beans:bean id="profiler" class="com.daugherty.profile.MostRecentExecutionsProfiler">
+    <beans:property name="sampleSize" value="25" />
+  </beans:bean>
+  
+</beans:beans>

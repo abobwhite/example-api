@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security.xsd">
+
+  <!-- See Spring Security Ref Doc (especially Chapter 11) and http://java.dzone.com/articles/securing-restful-web-service -->
+
+  <http use-expressions="true" entry-point-ref="restAuthenticationEntryPoint" create-session="ifRequired"
+    request-matcher="regex">
+    <intercept-url pattern="/anonymous" access="isAnonymous()" />
+    <intercept-url pattern="/buyLeads(\?.+)?" access="isAnonymous() or isAuthenticated()" />
+    <intercept-url pattern="/ipn" access="isAnonymous()" />
+    <intercept-url pattern="/buyers" access="isAnonymous()" />
+    <intercept-url pattern="/sessions" access="isAnonymous()" />
+    <intercept-url pattern="/suppliers" access="isAnonymous()" />
+    <intercept-url pattern="/memberships(\?.+)?" access="isAnonymous() or isAuthenticated()" />
+    <intercept-url pattern="/users/forgotPassword" access="isAnonymous()" method="DELETE" />
+    <intercept-url pattern="/users/confirmation" access="isAnonymous()" method="POST" />
+    <intercept-url pattern="/users/reset" access="isAnonymous()" method="PUT" />
+    
+    <intercept-url pattern="/inquiry/(.*)" access="isAnonymous() or isAuthenticated()" />
+
+    <intercept-url pattern="/certifications/\d+(\?[\w=\&#38;]*)?" access="isAnonymous() or isAuthenticated()"
+      method="GET" />
+    <intercept-url pattern="/documents/[^\s]+" access="isAnonymous() or isAuthenticated()" method="GET" />
+    <intercept-url pattern="/memberships/\d+(\?_=\d+)?" access="isAnonymous() or isAuthenticated()" method="GET" />
+    <intercept-url pattern="/messages/[^\s]+(\?.+)?" access="isAnonymous() or isAuthenticated()" method="GET" />
+    <intercept-url pattern="/messages/[^\s]+/interactions(\?.+)?" access="isAnonymous() or isAuthenticated()" />
+    <intercept-url pattern="/productCategories(\?[\w=\&#38;]+)?" access="isAnonymous() or isAuthenticated()"
+      method="GET" />
+    <intercept-url pattern="/productMessages/[^\s]+(\?.+)?" access="isAnonymous() or isAuthenticated()" method="GET" />
+    <intercept-url pattern="/products(\?[=\w\+%2B\&#38;,'-]+)?" access="isAnonymous() or isAuthenticated()"
+      method="GET" />
+    <intercept-url pattern="/productIds(\?.+)?" access="isAnonymous() or isAuthenticated()" method="GET" />
+    <intercept-url pattern="/products/\d+(\?_=\d+)?" access="isAnonymous() or isAuthenticated()" method="GET" />
+    <intercept-url pattern="/redirects/.+/\d+(\?[\w=\&#38;]+)?" access="isAnonymous() or isAuthenticated()"
+      method="GET" />
+    <intercept-url pattern="/suppliers/[^\s]+/products(\?[\w=\&#38;]*)?" access="isAnonymous() or isAuthenticated()" method="GET" />
+    <intercept-url pattern="/suppliers/[^\s]+/membership" access="isAnonymous() or isAuthenticated()" method="GET" />
+    <intercept-url pattern="/suppliers/[^\s]+/productSummary" access="isAnonymous() or isAuthenticated()" method="GET" />
+    <intercept-url pattern="/suppliers/[^\s]+(\?_=\d+)?" access="isAnonymous() or isAuthenticated()" method="GET" />
+    
+    <intercept-url pattern="/latestSuppliers" access="isAnonymous()" method="POST" />
+    <intercept-url pattern="/latestSuppliers/[^\s]+(\?_=\d+)?" access="isAuthenticated()" />
+
+    <intercept-url pattern="/monitoring(\?[\w=/\-\&#38;]+)?" access="hasRole('ROLE_ADMIN')" />
+
+    <intercept-url pattern="/**" access="isAuthenticated()" />
+
+    <custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER" />
+    <custom-filter ref="rememberMeFilter" position="REMEMBER_ME_FILTER" />
+    <custom-filter ref="logoutFilter" position="LOGOUT_FILTER" />
+  </http>
+  <global-method-security secured-annotations="enabled" proxy-target-class="true" />
+
+  <!-- Entry point that defaults to 401 Unauthorized -->
+  <beans:bean id="restAuthenticationEntryPoint" class="com.daugherty.e2c.service.security.RestAuthenticationEntryPoint" />
+
+  <!-- Login Filter: Processes username/password-based logins and redirects to the user retrieval service -->
+  <beans:bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+    <beans:property name="authenticationManager" ref="authenticationManager" />
+    <beans:property name="authenticationSuccessHandler" ref="authenticationSuccessHandler" />
+    <beans:property name="authenticationFailureHandler" ref="authenticationFailureHandler" />
+    <beans:property name="filterProcessesUrl" value="/sessions" />
+    <beans:property name="usernameParameter" value="userId" />
+    <beans:property name="passwordParameter" value="password" />
+    <beans:property name="rememberMeServices" ref="rememberMeServices" />
+  </beans:bean>
+  <beans:bean id="authenticationSuccessHandler" class="com.daugherty.e2c.service.security.FailureCountResettingAuthenticationSuccessHandler">
+    <beans:property name="defaultTargetUrl" value="/sessions/user" />
+    <beans:property name="userWriteDao" ref="jdbcUserDao" />
+  </beans:bean>
+  <beans:bean id="authenticationFailureHandler" class="com.daugherty.e2c.service.security.BadCredentialsLimitingAuthenticationFailureHandler">
+    <beans:property name="userWriteDao" ref="jdbcUserDao" />
+  </beans:bean>
+  <beans:bean id="jdbcUserDao" class="com.daugherty.e2c.persistence.data.jdbc.JdbcUserDao">
+    <beans:property name="dataSource" ref="dataSource" />
+  </beans:bean>
+  <!-- RememberMe Filter: Maps incoming HTTP request cookie information to the authenticated user -->
+  <beans:bean id="rememberMeFilter" class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
+    <beans:constructor-arg name="authenticationManager" ref="authenticationManager" />
+    <beans:constructor-arg name="rememberMeServices" ref="rememberMeServices" />
+  </beans:bean>
+  <!-- Logout Filter: clears RememberMe cookie from response and prevents redirects afterward -->
+  <beans:bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+    <beans:constructor-arg name="logoutSuccessHandler" ref="logoutSuccessHandler" />
+    <beans:constructor-arg name="handlers">
+      <beans:list>
+        <beans:ref bean="securityContextLogoutHandler" />
+        <beans:ref bean="rememberMeServices" />
+      </beans:list>
+    </beans:constructor-arg>
+    <beans:property name="filterProcessesUrl" value="/sessions/cleared" />
+  </beans:bean>
+  <beans:bean id="logoutSuccessHandler" class="org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler">
+    <beans:property name="redirectStrategy">
+      <beans:bean class="com.daugherty.e2c.service.security.NullRedirectStrategy" />
+    </beans:property>
+  </beans:bean>
+  <beans:bean id="securityContextLogoutHandler" class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler">
+    <beans:property name="invalidateHttpSession" value="true" />
+  </beans:bean>
+
+  <!-- Authentication is based on RememberMe services -->
+  <authentication-manager alias="authenticationManager">
+    <authentication-provider ref="rememberMeAuthenticationProvider" />
+    <!--<authentication-provider user-service-ref="userDetailsService" /> -->
+    <authentication-provider ref="daoAuthenticationProvider" />
+  </authentication-manager>
+  <beans:bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+    <beans:constructor-arg name="key" value="e2cApiKey" />
+  </beans:bean>
+
+  <!-- Sets RememberMe cookie on HTTP response and stores token information (together with users) in database -->
+  <beans:bean id="rememberMeServices"
+    class="org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices">
+    <beans:constructor-arg name="key" value="e2cApiKey" />
+    <beans:constructor-arg name="userDetailsService" ref="jdbcUserDao" />
+    <beans:constructor-arg name="tokenRepository" ref="jdbcTokenRepository" />
+    <beans:property name="alwaysRemember" value="true" /> <!-- No UI for remember-me -->
+    <beans:property name="tokenValiditySeconds" value="86400" /> <!-- Tokens last for 24 hours after last access -->
+  </beans:bean>
+  
+  <beans:bean id="jdbcTokenRepository" class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
+    <beans:property name="dataSource" ref="dataSource" />
+  </beans:bean>
+
+  <!-- Generates and evaluates password hashing compatible with legacy data -->
+  <beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+    <beans:property name="userDetailsService" ref="jdbcUserDao" />
+    <beans:property name="passwordEncoder" ref="passwordEncoder" />
+  </beans:bean>
+  
+  <beans:bean id="passwordEncoder" class="com.daugherty.e2c.security.PHPassEncoder" />
+  
+  <beans:bean id="Hashids" class="com.daugherty.e2c.persistence.data.Hashids">
+    <beans:constructor-arg name="salt" value="e2cRocks!" />
+    <beans:constructor-arg name="minHashLength" value="8" />
+  </beans:bean>
+
+</beans:beans>

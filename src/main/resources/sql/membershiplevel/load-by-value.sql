@@ -1,0 +1,22 @@
+SELECT membership_level_id,
+       level,
+       base_price,
+       term,
+       number_of_product,
+       number_of_messages,
+	   number_of_translations,
+	   company_showroom,
+	   hot_product_listing,
+	   product_alert,
+	   supplier_to_supplier_inquiry,
+	   export_to_china_tutorial,
+	   enhance_profile,
+	   third_party_verification,
+	   website_and_advanced_email,
+	   video,
+	   contact_china_direct,
+	   market_analysis,
+	   buyer_search,
+	   logistics_assistance
+FROM active_membership_level_view
+WHERE level = :level

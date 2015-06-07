@@ -1,0 +1,1503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+  <beans profile="local">
+    <bean id="emailUrlBuilder" class="com.daugherty.e2c.mail.EmailUrlBuilder">
+      <constructor-arg name="urlBuilder" ref="urlBuilder" />
+      <constructor-arg name="mailUri" value="https://dev-export-to-china.daugherty.com/newman/emails" />
+    </bean>
+  </beans>
+  <beans profile="dev">
+    <bean id="emailUrlBuilder" class="com.daugherty.e2c.mail.EmailUrlBuilder">
+      <constructor-arg name="urlBuilder" ref="urlBuilder" />
+      <constructor-arg name="mailUri" value="/newman/emails" />
+    </bean>
+  </beans>
+  <beans profile="test, qa, prod">
+    <bean id="emailUrlBuilder" class="com.daugherty.e2c.mail.EmailUrlBuilder">
+      <constructor-arg name="urlBuilder" ref="urlBuilder" />
+      <constructor-arg name="mailUri" value="/newman/emails" />
+    </bean>
+  </beans>
+    
+  <beans profile="local, dev , test, qa">
+    <bean id="eftMailAddress" class="java.lang.String" >
+        <constructor-arg value="export2chinatester@gmail.com"></constructor-arg>
+    </bean>
+  </beans>  
+  
+    <beans profile="prod">
+    <bean id="eftMailAddress" class="java.lang.String" >
+        <constructor-arg value="sales@export-to-china.com"></constructor-arg>
+    </bean>
+  </beans>  
+    
+  <beans>
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate" />
+    
+    <bean id="ElectronicFundTransferMailSender" class="com.daugherty.e2c.mail.sender.ElectronicFundTransferMailSender">
+    	<constructor-arg name="eftMailAddress" ref="eftMailAddress" />
+    </bean>
+
+    <bean id="buyerRegistrationConfirmationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Huijinkou Registration &lt;register@huijinkou.com&gt;" />
+      <constructor-arg name="subject" value="请确认您在荟进口的注册" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+        <![CDATA[
+          <div style="width:600px;">
+          <br>
+          <p>欢迎访问使用荟进口！</p>
+          <p>您的用户名： <b>%s</b></p>
+          <p>请点击以下链接（或将其粘贴到浏览器）以继续：<p>
+          <p><a href="%s">%s</a><p>
+          <p>请使用您选择的用户名和密码进行登录。</p> 
+          <p>填写贵公司信息后，便可以验证买家身份联系供应商。</p>
+          <p>上面的链接只能用于您的第一次访问。以后，您只需使用我们网站的登录按钮进行登录。</p>
+          <p>祝生意兴隆！</p>
+          <p>荟进口团队</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishSupplierRegistrationConfirmationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Registration &lt;register@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Confirm your Registration at ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+        <![CDATA[
+          <div style="width:600px;">
+          <br>
+          <p>Welcome to ExportToChina.com!</p>
+          <p>Your username is: <b>%s</b></p>
+          <p>To continue, please click on the following link (or paste it into your browser):</p>
+          <p><a href="%s">%s</a><p>
+          <p>Sign in with the username and password you selected.</p> 
+          <p>Complete your company information, select a Membership package, and submit your products - so buyers in China can contact you.</p>
+          <p>The previous link can only be used for a first time access to your account. In the future, simply use the Sign In button on our website.</p>
+          <p>Wishing you the best of business!</p>
+          <p>ExportToChina.com team</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishSupplierRegistrationConfirmationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Registration &lt;register@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Confirme su Registro en ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+        <![CDATA[
+          <div style="width:600px;">
+          <br> 
+          <p>Bienvenido a ExportToChina.com!</p>
+          <p>Su nombre de usuario es: <b>%s</b></p>
+          <p>Para continuar, haga clic en el siguiente enlace (o péguelo en su navegador):</p>
+          <p><a href="%s">%s</a><p>
+          <p>Ingrese con su nombre de usuario y la contraseña que ha elegido.</p> 
+          <p>Luego complete la información de su empresa, seleccione un paquete y cargue la información de sus productos para que compradores en China puedan contactarlo.</p>
+          <p>El enlace anterior solo puede utilizarse para ingresar por primera vez a su cuenta. En el futuro, simplemente utilice el botón “Iniciar Sesión” que verá en nuestro sitio.</p>
+          <p>Le deseamos el mayor de los éxitos.</p>
+          <p>El equipo de ExportToChina.com</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+
+    <bean id="buyerRegistrationCompletionEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Lisa Wong &lt;lwong@huijinkou.com&gt;" />
+      <constructor-arg name="subject" value="非常感谢贵司在荟进口平台上提交公司资料" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+        <![CDATA[
+          <div style="width:600px;">
+          <br>  
+          <p>亲爱的中国采购及进口商：</p>
+          <p>非常感谢您在荟进口平台上提交贵司的公司资料。</p>
+          <p>您的申请正在审核中，烦请耐心等待。我们将会在两个工作天之内通知贵司审核结果。如果您还有任何问题，请随时与我们联系，我们将非常乐意为您提供服务与帮助。<p>
+          <p>Lisa Wong</p>
+          <p>荟进口海外采购平台线上营销助理</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+
+    <bean id="buyerRegistrationApprovedEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Lisa Wong &lt;lwong@huijinkou.com&gt;" />
+      <constructor-arg name="subject" value="恭喜贵司！您所提交的资料已获审核！" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+        <![CDATA[
+          <div style="width:600px;">
+          <br>  
+          <p>亲爱的中国采购及进口商：</p>
+          <p>恭喜贵司的申请已获审核！并再次感谢您注册使用Huijinkou.com (荟进口海外采购平台)！现在您可即时在我们的平台上开始联系平台上的供应商！</p>
+          <p>为使贵司能更快捷地达成交易，我们建议您向供应商提供贵司对产品的要求以及具体交货安排等等细节信息。通过此举不仅可反映贵司所提供的信息是真实可靠的，并能在世界各地的供应商中建立建立商誉以及提升贵司的企业形象！<p>
+          <p>此外，贵司在平台上搜索产品时，尽可尝试使用不同的搜寻条件及关键字以求获得贵司想要的搜索结果。</p>
+          <p>如果您还有任何问题，请随时与我们联系，我们将非常乐意为您提供服务与帮助。</p>
+          <p>Lisa Wong</p>
+          <p>荟进口海外采购平台线上营销助理</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishSupplierRegistrationApprovedEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Your company profile is translated – Start connecting with China buyers" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <br>
+          <p>Dear %s,</p>
+          <p>Your company profile at ExportToChina.com has already been translated into Chinese!</p>
+          <p>However, your company will only show on our website when you add products/services with the “Add Product” button in your account. This will allow interested China buyers to contact you directly.</p>
+          <p>Remember, the more products you add, the more exposure you gain!</p>
+          
+          <p>
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishSupplierRegistrationApprovedEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Su perfil ha sido traducido – Conéctese con compradores chinos" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <br>
+          <p>Estimado  %s,</p>
+          <p>El perfil de su empresa en ExportToChina.com ya se encuentra traducido al chino!</p>
+          <p>Sin embargo, su empresa solo aparecerá en nuestra web cuando usted añada productos o servicios con el botón “Añadir Producto” dentro de su cuenta. Esto permitirá a los compradores chinos interesados ponerse en contacto con usted.</p>
+          <p>Recuerde, cuantos más productos añada, mayor será su visibilidad y sus oportunidades!</p>
+          
+          <p>
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishSupplierRegistrationApprovedWithProductsEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Your product submission at ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <br>
+          <p>Dear %s,</p>
+          <p>Thank you for submitting your products to ExportToChina.com!</p>
+          <p>Our team is already reviewing and translating your offers into Chinese, and will publish them in your company showroom at ExportToChina.com in 2-3 business days.</p>
+          <p>Meanwhile, we encourage you to keep posting products to increase your online exposure!</p>
+          
+          <p>
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishSupplierRegistrationApprovedWithProductsEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Sus productos en ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <br>
+          <p>Estimado  %s,</p>
+          <p>Gracias por añadir productos a su cuenta en ExportToChina.com!</p>
+          <p>Los mismos ya están siendo revisados y traducidos al chino, y aparecerán publicados en el showroom de su empresa en ExportToChina.com en los proximos 2-3 días laborables.</p>
+          <p>Mientras tanto, lo invitamos a seguir añadiendo productos para potenciar su visibilidad en nuestro sitio!</p>
+          
+          <p>
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+
+    <bean id="buyerForgotPasswordEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Huijinkou Password &lt;password@huijinkou.com&gt;" />
+      <constructor-arg name="subject" value="您在荟进口平台的密码重设" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+        <![CDATA[
+          <div style="width:600px;">
+          <p>亲爱的买家，</p>
+          <p>你的用户名是： %s</p>
+          <p>还差一步就完成了您的密码重置。请点击以下链接（又或者将以下链接粘帖至浏览器）以完成你的密码重置：</p>
+          <p><a href="%s">%s</a><p>
+
+          <p>祝你生意兴隆！</p>
+          <p>Huijinkou.com 团队及“荟进口”海外采购资讯平台</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishSupplierForgotPasswordEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Password &lt;password@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Your password recovery at ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+        <![CDATA[
+          <div style="width:600px;">  
+          <p>Dear Supplier,</p>
+          <p>Your username is: %s</p>
+          <p>You have nearly completed your password reset. Just click on the link below (or paste it into your browser)</p>
+          <p><a href="%s">%s</a><p>
+
+          <p>Wishing you the Best of Business.</p>
+          <p>ExportToChina.com</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishSupplierForgotPasswordEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Password &lt;password@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Recuperación de Contraseña en ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+        <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado Proveedor,</p>
+          <p>Su nombre de usuario es: %s</p>
+          <p>Usted está a punto de completar la modificación de su contraseña. Simplemente haga clic en el siguiente link para finalizar la modificación</p>
+          <p><a href="%s">%s</a><p>
+
+          <p>Cordialmente</p>
+          <p>El equipo de ExportToChina.com</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+
+    <bean id="buyerChangePasswordEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Huijinkou Password &lt;password@huijinkou.com&gt;" />
+      <constructor-arg name="subject" value="您在荟进口平台的密码已重置" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+        <![CDATA[
+          <div style="width:600px;">
+          <br> 
+          <p>亲爱的买家,</p>
+          <p>请知悉您在“荟进口”采购资讯平台的所设定的密码已被重新设置！如果您没有要求是次的密码重置，请发送邮件至password@huijinkou.com 联系我们以作记录！谢谢！</p>
+
+          <p>祝您生意兴隆！</p>
+          <p>Huijinkou.com 团队及“荟进口”海外采购资讯平台</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishSupplierChangePasswordEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Password &lt;password@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Your password reset at ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+        <![CDATA[
+          <div style="width:600px;">
+          <br>
+          <p>Dear %s,</p>
+          <p>Your password has been recently reset at ExportToChina.com.  If you did not request this password reset, please contact us at password@export-to-china.com and let us know.</p>
+
+          <p>Wishing you the Best of Business.</p>
+          <p>ExportToChina.com team</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishSupplierChangePasswordEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Password &lt;password@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Cambio de Contraseña en ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+        <![CDATA[
+          <div style="width:600px;">
+          <br> 
+          <p>Estimado %s,</p>
+          <p>Su contraseña acaba de ser modificada. Si usted no ha solicitado esta modificación, por favor infórmenos a password@export-to-china.com.</p>
+
+          <p>Cordialmente,</p>
+          <p>El equipo de ExportToChina.com</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+
+    <bean id="englishMessageNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Business Inquiry &lt;noreply@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="A buyer from ExportToChina.com has sent you an inquiry" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Congratulations! A buyer from ExportToChina.com is interested in your products and would like to receive more information:</p>
+          <ul>
+          %s
+          </ul>
+          <p>To start talking with this buyer, please click on the following link: %s</p>
+          <p>Our buyers often contact multiple suppliers when looking for products on ExportToChina.com.  Standout from the competition by adding more products or upgrading your membership today!</p>
+          <p>Wishing you the Best of success.</p>
+          <p>The ExportToChina.com team</p>
+          <p><i>China buyers operating through ExportToChina.com are pre-screened companies. However, we always recommend doing your own due-diligence before closing a deal with a buyer.</i></p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMessageNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Business Inquiry &lt;noreply@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Un comprador de ExportToChina.com le ha enviado una consulta" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado %s,</p>
+          <p>Felicitaciones! Un comprador de ExportToChina.com está interesado en sus productos y desea recibir más información:</p>
+          <ul>
+          %s
+          </ul>
+          <p>Para comenzar a dialogar con este comprador, haga clic en el siguiente enlace: %s</p>
+          <p>Nuestros compradores suelen contactar a múltiples proveedores al buscar productos en ExportToChina.com. Destáquese de su competencia añadiendo más productos o adquiriendo un upgrade en su cuenta!</p>
+          <p>Le deseamos el mayor de los éxitos.</p>
+          <p>El equipo de ExportToChina.com</p>
+          <p><i>Los compradores chinos operando a través de ExportToChina.com son empresas pre-calificadas. Sin embargo, le recomendamos realizar su propia investigación antes de cerrar un trato con el comprador.</i></p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="advancedSupplierMessageEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Business Inquiry &lt;noreply@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Inquiry from a buyer at ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Congratulations! A buyer from ExportToChina.com is interested in your products:</p>
+          <ul>
+          %s
+          </ul>
+          <p>The buyer has requested the following information:</p>
+          <ul>
+          %s
+          </ul>
+          <p>Message from the buyer to you:</p>
+          <p>%s</p>
+          <p><b>You may reply directly to this email to start communicating with this buyer.</b></p>
+          <p>Wishing you the Best of success!</p>
+          <p>The ExportToChina.com team</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+
+    <bean id="supplierToBuyerReplyNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Huijinkou Business Inquiry &lt;noreply@huijinkou.com&gt;" />
+      <constructor-arg name="subject" value="一位来自荟进口海外采购资讯平台的供应商已回覆了您的询盘!" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>亲爱的中国采购及进口商：</p>
+          <p>恭喜您！一位来自荟进口海外采购资讯平台(Huijinkou.com) 的供应商已回覆了您的询盘!</p>
+          <p>查看此位供应商的回覆以及作出回应，烦请访问以下网址： %s<p>
+          <p>我们由衷希望您能找到您称心如意的商业合作伙伴以及成功达成交易！</p>
+          <p>Huijinkou.com 荟进口海外采购平台团队</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="supplierToEnglishSupplierReplyNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Business Inquiry &lt;noreply@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="A supplier from ExportToChina.com has replied to you" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>A supplier from ExportToChina.com has replied to your message.</p>
+          <p>To talk with this company, please click on the following link: %s</p>
+          <p>Best regards,</p>
+          <p>The ExportToChina.com team</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="supplierToSpanishSupplierReplyNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Business Inquiry &lt;noreply@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Un proveedor de ExportToChina.com ha respondido su mensaje" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado %s,</p>
+          <p>Un proveedor de ExportToChina.com ha respondido su mensaje.</p>
+          <p>Para dialogar con esta empresa, haga clic en el siguiente enlace: %s</p>
+          <p>Cordialmente,</p>
+          <p>El equipo de <a href="https://www.export-to-china.com">ExportToChina.com</a></p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="buyerToEnglishSupplierReplyNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Business Inquiry &lt;noreply@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="A buyer from ExportToChina.com has replied to you" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>A buyer from ExportToChina.com has replied to your message.</p>
+          <p>To talk with this buyer, please click on the following link: %s</p>
+          <p>Best regards,</p>
+          <p>The ExportToChina.com team</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="buyerToSpanishSupplierReplyNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Business Inquiry &lt;noreply@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Un comprador de ExportToChina.com le ha respondido" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado %s,</p>
+          <p>Un comprador de ExportToChina.com ha respondido su mensaje.</p>
+          <p>Para dialogar con esta comprador, haga clic en el siguiente enlace: %s</p>
+          <p>Cordialmente,</p>
+          <p>El equipo de ExportToChina.com</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="advancedSupplierReplyEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Business Inquiry &lt;noreply@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Re: Inquiry from ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>%s</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishSupplierElectronicFundTransferEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Business Inquiry &lt;noreply@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="EFT notice for supplier membership at ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear ETC Admin,</p>
+          <p>The supplier below would like to purchase a %s Star package at a cost of $%s</p>
+          <p>Contact Name: %s<br/>Contact Email Address: %s</p>
+          <p>Regards,<br/>
+          The ETC Application</p>     
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    
+    <bean id="englishMembershipLevelOneWelcomeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="How to use your 1-Star Package at ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Welcome to ExportToChina.com. Your company information is already under review and Chinese translation.</p>
+          <p>To start using your package, please add products or services with the “Add Product” button in your account. Add each item individually in a separate form. Our team will translate your product information into Chinese and publish on our website in 2-3 business days. Interested China buyers can then start contacting you directly.</p>
+          <p>You have chosen to begin using our platform with a 1-Star Package, which gives you access for 6 months to the following benefits:</p>
+          <ul>
+            <li>Promotion of up to %s products on ExportToChina.com’s English and Chinese sites</li>
+            <li>Chinese translation and promotion of your company and product info</li>
+            <li>Your own company showroom in English and Chinese</li>
+            <li>Unlimited messaging from China buyers</li>
+            <li>Automatic e-mail alert each time a buyer sends you an inquiry</li>  
+          </ul>
+          
+          <p>No commissions are charged for successful deals and you are not obligated to purchase a new Package upon expiration.</p>
+          <p>Of course, you can upgrade anytime to gain better exposure and access other valuable benefits to instill confidence in potential buyers. If you decide to upgrade before the end of your current Package, we will recognize your available credit!</p>
+          <p>We look forward to receiving your product information soon. If you have any questions, we are glad to help.</p> 
+          <p>Many thanks and wishing you an excellent day.</p>   
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMembershipLevelOneWelcomeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Cómo utilizar su Paquete 1-Star en ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado  %s,</p>
+          <p>Bienvenido a ExportToChina.com. La información de su empresa ya se encuentra en proceso de revisión y traducción al chino.</p>
+          <p>Para comenzar utilizar su paquete, añada sus productos o servicios con el botón “Añadir Producto” dentro de su cuenta. Cargue cada ítem en formularios separados. Nuestro equipo traducirá al chino la información de sus productos y éstos serán publicados en nuestra página al cabo de 2-3 días laborables. De esta forma, los compradores chinos interesados comenzarán a contactarlo directamente.</p>
+          <p>Usted ha optado por comenzar a utilizar nuestro portal con el Paquete 1-Star, el cual le brinda acceso por 6 meses a los siguientes beneficios:</p>
+          <ul>
+            <li>Promoción de hasta %s productos en los portales en inglés, español y chino de ExportToChina.com</li>
+            <li>Traducción y promoción en chino de la información de su empresa y productos</li>
+            <li>Un showroom propio de su empresa en inglés y chino</li>
+            <li>Mensajes ilimitados de compradores chinos</li>
+            <li>Notificación automática por email cada vez que un comprador le envía un mensaje</li>  
+          </ul>
+          
+          <p>No cobramos comisión y usted no está obligado a adquirir un nuevo paquete al finalizar el actual.</p>
+          <p>Por supuesto, usted puede obtener un upgrade en cualquier momento para ganar visibilidad y acceder a otros valiosos beneficios que motivarán la confianza de los potenciales compradores. Si decide adquirir un upgrade antes de la finalización de su paquete actual, reconoceremos su crédito disponible!</p>
+          <p>Esperamos recibir pronto la información de sus productos. Si tiene consultas, con mucho gusto lo ayudaremos.</p>  
+          <p>Muchas gracias y que tenga un excelente día.</p> 
+          Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishMembershipLevelTwoWelcomeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="How to use your 2-Star Package at ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Welcome to ExportToChina.com. Your company information is already under review and Chinese translation.</p>
+          <p>To start using your package, please add products or services with the “Add Product” button in your account. Add each item individually in a separate form. Our team will translate your product information into Chinese and publish on our website in 2-3 business days. Interested China buyers can then start contacting you directly.</p>
+          <p>You have chosen to start using our website with a 2-Star Package, which gives you access for 6 months to the following benefits:</p>
+          <ul>
+            <li>Promotion of up to %s products on ExportToChina.com’s English and Chinese sites</li>
+			<li>Chinese translation and promotion of your company and product info</li>
+			<li>Priority listing in search results: Your products will have preference following suppliers with 3 and 4-Star Packages</li>
+			<li>Promotion of up to %s products on the homepage of our China site, Huijinkou.com</li>
+			<li>Access to our Export to China Tutorial</li>
+			<li>Enhanced profile and brand exposure</li>
+			<li>Unlimited messaging from China buyers</li>
+			<li>Your own company showroom in English and Chinese</li>
+			<li>Automatic e-mail alert each time a buyer sends you an inquiry</li>
+          </ul>
+          
+          <p>Of course, you can upgrade your account anytime to increase your exposure even more and access other valuable benefits to instill confidence in potential buyers. If you decide to upgrade before the end of your current Package, we will recognize your available credit!</p>
+		  <p>We look forward to receiving your product information soon. If you have any questions, we are glad to help.</p>
+		  <p>Many thanks and wishing you an excellent day.</p>
+		  <p>*If you paid by EFT, your products will be processed once we have confirmed the reception of the payment.</p>
+		  Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMembershipLevelTwoWelcomeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Cómo utilizar su Paquete 2-Star en ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado  %s,</p>
+          <p>Bienvenido a ExportToChina.com. La información de su empresa ya se encuentra en proceso de revisión y traducción al chino.</p>
+          <p>Para comenzar utilizar su paquete, añada sus productos o servicios con el botón “Añadir Producto” dentro de su cuenta. Cargue cada ítem en formularios separados. Nuestro equipo traducirá al chino la información de sus productos y éstos serán publicados en nuestra página al cabo de 2-3 días laborables. De esta forma, los compradores chinos interesados comenzarán a contactarlo directamente.</p>
+          <p>Usted ha optado por comenzar a utilizar nuestra web con el Paquete 2-Star, el cual le brinda acceso por 6 meses a los siguientes beneficios:</p>
+          <ul>
+            <li>Promoción de hasta %s productos en los portales en inglés, español y chino de ExportToChina.com</li>
+			<li>Traducción y promoción en chino de la información de su empresa y productos</li>
+			<li>Prioridad en resultados de búsqueda: sus productos tendrán preferencia a continuación de proveedores con paquetes 3-Star y 4-Star</li>
+			<li>Promoción de hasta %s productos en la homepage de Huijinkou.com</li> 
+			<li>Acceso al manual sobre Exportación a China</li>
+			<li>Perfil Mejorado y Exposición de Marca</li>
+			<li>Mensajes ilimitados de compradores chinos</li>
+			<li>Un showroom propio de su empresa en inglés y chino</li>
+			<li>Alerta automático por email cada vez que un comprador le envía un mensaje</li>
+          </ul>
+          
+          <p>No cobramos comisión y usted no está obligado a adquirir un nuevo paquete al finalizar el actual.</p>
+          <p>Por supuesto, usted puede obtener un upgrade en cualquier momento para incrementar aún más su visibilidad y acceder a otros valiosos beneficios que motivarán la confianza de los potenciales compradores. Si decide adquirir un upgrade antes de la finalización de su paquete actual, reconoceremos su crédito disponible!</p>
+          <p>Esperamos recibir pronto la información la información de sus productos. Si tiene consultas, con mucho gusto lo ayudaremos.</p>  
+          <p>Muchas gracias y que tenga un excelente día.</p>
+          <p>*Si usted ha pagado mediante transferencia bancaria, sus productos serán procesados una vez que hayamos confirmado la recepción del pago.</p>
+          Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishMembershipLevelThreeWelcomeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="How to use your 3-Star Package at ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Welcome to ExportToChina.com. Your company information is already under review and Chinese translation.</p>
+          <p>To start using your package, please add products or services with the “Add Product” button in your account. Add each item individually in a separate form. Our team will translate your product information into Chinese and publish on our website in 2-3 business days. Interested China buyers can then start contacting you directly.</p>
+          <p>You have chosen to start using our website with a 3-Star Package, which gives you access for 6 months to the following benefits:</p>
+          <ul>
+            <li>Promotion of up to %s products on ExportToChina.com’s English and Chinese sites</li>
+			<li>Chinese translation and promotion of your company and product info</li>
+			<li>Your own company showroom in English and Chinese</li>
+			<li>Priority listing in search results: Your products will have preference following competitors with 4-Star Packages</li>
+			<li>Access to our exclusive “How to Export to China” tutorial</li>
+			<li>Hot Product Listing: Promotion of up to %s items on the homepage of Huijinkou.comv
+			<li>Enhanced Profile & Brand Exposure</li>
+			<li>Product Alerts</li>
+			<li>Unlimited messaging from China buyers</li>
+			<li>Automatic e-mail alert each time a buyer sends you an inquiry</li>
+          </ul
+          
+		  <p>No commissions are charged for successful deals and you are not obligated to purchase a new Package upon expiration.</p>
+		  <p>We look forward to receiving your product information soon. If you have any questions, we are glad to help.</p>
+		  <p>Many thanks and wishing you an excellent day.</p>
+		  <p>*If you paid by EFT, your products will be processed once we have confirmed the reception of the payment.</p>
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMembershipLevelThreeWelcomeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Cómo utilizar su Paquete 3-Star en ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado  %s,</p>
+          <p>Bienvenido a ExportToChina.com. La información de su empresa ya se encuentra en proceso de revisión y traducción al chino.</p>
+          <p>Para comenzar utilizar su paquete, añada sus productos o servicios con el botón “Añadir Producto” dentro de su cuenta. Cargue cada ítem en formularios separados. Nuestro equipo traducirá al chino la información de sus productos y éstos serán publicados en nuestra página al cabo de 2-3 días laborables. De esta forma, los compradores chinos interesados comenzarán a contactarlo directamente.</p>
+          <p>Usted ha optado por comenzar a utilizar nuestra web con el Paquete 3-Star, el cual le brinda acceso por 6 meses a los siguientes beneficios:</p>
+          <ul>
+            <li>Promoción de hasta %s productos en los portales en inglés, español y chino de ExportToChina.com</li>
+			<li>Traducción y promoción en chino de la información de su empresa y productos</li>
+			<li>Un showroom propio de su empresa en inglés y chino</li>
+			<li>Prioridad en resultados de búsqueda: sus productos tendrán preferencia a continuación de proveedores con paquetes 4-Star</li>
+			<li>Promoción de hasta %s productos en la homepage de Huijinkou.com</li> 
+			<li>Acceso al manual sobre Exportación a China</li>
+			<li>Perfil Mejorado y Exposición de Marca</li>
+			<li>Alertas de Productos</li>
+			<li>Mensajes ilimitados de compradores chinos</li>
+			<li>Alerta automático por email cada vez que un comprador le envía un mensaje</li>
+          </ul
+          
+	      <p>No cobramos comisión y usted no está obligado a adquirir un nuevo paquete al finalizar el actual.</p>
+		  <p>Esperamos recibir pronto la información la información de sus productos. Si tiene consultas, con mucho gusto lo ayudaremos.</p>
+		  <p>Muchas gracias y que tenga un excelente día.</p>
+		  <p>*Si usted ha pagado mediante transferencia bancaria, sus productos serán procesados una vez que hayamos confirmado la recepción del pago.</p>
+          Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishMembershipLevelFourWelcomeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="How to use your 4-Star Package at ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Welcome to ExportToChina.com, your B2B portal to China. Your company information is already under review and Chinese translation.</p>
+          <p>To start promoting on our site, please add products or services with the “Add Product” button in your account. Add each item individually in a separate form. Our team will translate your product information into Chinese and publish on our website in 2-3 business days. Interested China buyers can then start contacting you directly.</p>
+          <p>You have chosen to start using our website with a 4-Star Membership, which gives you access for 6 months to the following benefits:</p>
+          <ul>
+            <li>Promotion of up to %s products on ExportToChina.com’s English and Chinese sites</li> 
+            <li>Chinese translation and promotion of your company and product info</li>
+            <li>Priority listing in search results: Your products will have top preference over your competitors with lower tier packages</li>
+            <li>Unlimited messaging from China buyers</li>
+            <li>Your own company showroom in English and Chinese</li> 
+            <li>Automatic e-mail alert each time a buyer sends you an inquiry</li>
+            <li>Access to our exclusive “How to Export to China” tutorial</li>
+            <li>Hot Product Listing: Promotion of up to %s items on our Homepage</li>
+            <li>Possibility to interact with other ExportToChina.com suppliers</li>
+            <li>Enhanced Profile & Brand Exposure: Add up to 3 images to your product profiles</li>
+          </ul
+          <p>Exclusive 4-Star Member benefits:</p>
+          <ul>
+            <li>Credit Check Certificate issued by the Finance, Credit and International Business Association (FCIB)**</li> 
+            <li>Product Alerts: Your newly posted products will be featured in emails sent to Chinese buyers in your industry</li>
+            <li>A link to your company website on your showroom at ExportToChina.com and Huijinkou.com, and ability to communicate with buyers through your own email account</li>
+            <li>A link to your corporate or product video in your company showroom</li>
+          </ul
+          
+          <p>These features will provide you the largest exposure and credibility in front of buyers, as well as helpful guidance in the process of expanding your business in the China market.</p>
+          <p>We look forward to receiving your product information soon. If you have any questions, we are glad to help.</p>
+          <p>Many thanks and wishing you an excellent day.</p>
+          <p>Helen</p>  
+          <p>*If you paid by EFT, your products will be processed once we have confirmed the reception of the payment.</p>
+          <p>**Your credit check certificate will be available in 15 business days.</p>
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMembershipLevelFourWelcomeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Cómo utilizar su Paquete 4-Star en ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado  %s,</p>
+          <p>Bienvenido a ExportToChina.com, su portal B2B hacia China. La información de su empresa ya se encuentra en proceso de revisión y traducción al chino.</p>
+          <p>Para comenzar a promocionar en nuestro sitio, añada sus productos o servicios con el botón “Añadir Producto” dentro de su cuenta. Cargue cada ítem en formularios separados. Nuestro equipo traducirá al chino la información de sus productos y éstos serán publicados en nuestra página al cabo de 2-3 días laborables. Los compradores chinos interesados podrán así contactarlo directamente.</p>
+          <p>Usted ha optado por comenzar a utilizar nuestra web con el Paquete 4-Star, el cual le brinda acceso por 6 meses a los siguientes beneficios:</p>
+          <ul>
+            <li>Promoción de hasta %s productos en los portales en inglés, español y chino de ExportToChina.com</li> 
+            <li>Traducción y promoción en chino de la información de su empresa y productos</li> 
+            <li>Prioridad en resultados de búsqueda: sus productos tendrán preferencia por sobre competidores con paquete más bajos</li>  
+            <li>Mensajes ilimitados de compradores chinos</li> 
+            <li>Un showroom propio de su empresa en inglés y chino</li> 
+            <li>Alerta automático por email cada vez que un comprador le envía un mensaje</li> 
+            <li>Acceso a nuestro exclusivo manual “Cómo exportar a China”</li> 
+            <li>Productos Destacados: promoción de hasta %s ítems en nuestra homepage</li> 
+            <li>Posibilidad de interactuar con otros proveedores en ExportToChina.com</li> 
+            <li>Perfil Mejorado & Visibilidad de Marca: añada hasta 3 imágenes, inclusive el logo de marca, al perfil de sus productos</li> 
+          </ul
+          <p>Beneficios exclusivos para Miembros 4-Star:</p>
+          <ul>
+            <li>Certificado de Verificación de Crédito extendido por la Finance, Credit and International Business Association (FCIB)**</li>
+            <li>Alertas de Productos: los nuevos productos que usted añada serán exhibidos en emails enviados a compradores chinos en su rubro</li>
+            <li>Un link a la web de su empresa en su showroom en ExportToChina.com y Huijinkou.com, y posibilidad de interactuar con compradores a través de su propio correo electrónico</li>
+            <li>Link al video de su empresa o producto en su showroom</li> 
+          </ul
+          
+          <p>Estos beneficios le brindan la más alta visibilidad y credibilidad ante compradores chinos, a la vez que información útil para la entrada y expansión de su negocio en China.</p>
+          <p>Esperamos recibir pronto la información la información de sus productos. Si tiene consultas, con mucho gusto lo ayudaremos.</p>
+          <p>Muchas gracias y que tenga un excelente día.</p>
+          <p>*Si usted ha pagado mediante transferencia bancaria, sus productos serán procesados una vez que hayamos confirmado la recepción del pago.</p>
+          <p>**Su certificado estará disponible en 15 días laborables.</p>
+          Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishMembershipLevelTwoUpgradeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Welcome to your 2-Star Package" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Congratulations! You are now 2-Star Member at ExportToChina.com.  </p>
+          <p>You can now enjoy the following benefits for 6 months: </p>
+          <ul>
+            <li>Promotion of up to %s products on ExportToChina.com’s English and Chinese sites</li>
+			<li>Chinese translation and promotion of your company and product info</li>
+			<li>Priority listing in search results: Your products will have preference following suppliers with 3 and 4-Star Packages</li>
+			<li>Promotion of up to %s products on the homepage of our China site, Huijinkou.com</li>
+			<li>Access to our Export to China Tutorial</li>
+			<li>Enhanced profile and brand exposure</li>
+			<li>Unlimited messaging from China buyers</li>
+			<li>Your own company showroom in English and Chinese</li>
+			<li>Automatic e-mail alert each time a buyer sends you an inquiry</li>
+          </ul>
+          
+          <p>These features provide you larger exposure than a 1-Star package, without a large investment. You can upgrade your account at any time to stand out from competitors, as well as access our “How to export to China” tutorial. </p>
+          <p>Also, remember: adding more products always helps your visibility, so we look forward to receiving more soon.* </p>
+          <p>Many thanks and wishing you an excellent day.</p>
+          <p>Helen</p> 
+          <p>*If you paid by EFT, your products will be processed once we have confirmed the reception of the payment.</p> 
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMembershipLevelTwoUpgradeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Bienvenido a su Paquete 2-Star" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado %s,</p>
+          <p>Felicitaciones! Usted es ahora Miembro 2-Star en ExportToChina.com.</p>
+          <p>Ya puede comenzar a disfrutar de los siguientes beneficios por 6 meses: </p>
+          <ul>
+            <li>Promoción de hasta %s productos en los portales en inglés, español y chino de ExportToChina.com</li>
+			<li>Traducción y promoción en chino de la información de su empresa y productos</li>
+			<li>Prioridad en resultados de búsqueda: sus productos tendrán preferencia a continuación de proveedores con paquetes 3-Star y 4-Star</li>
+			<li>Promoción de hasta %s productos en la homepage de Huijinkou.com</li> 
+			<li>Acceso al manual sobre Exportación a China</li>
+			<li>Perfil Mejorado y Exposición de Marca</li>
+			<li>Mensajes ilimitados de compradores chinos</li>
+			<li>Un showroom propio de su empresa en inglés y chino</li>
+			<li>Alerta automático por email cada vez que un comprador le envía un mensaje</li>
+          </ul>
+          
+          <p>Estos beneficios le brindan mayor visibilidad que un paquete introductorio sin una gran inversión. Usted puede obtener un upgrade de su cuenta en cualquier momento para destacarse de su competencia y acceder al manual “Cómo exportar a China”.</p>
+          
+          <p>También recuerde: añadir más productos siempre aumentará su visibilidad, de modo que esperamos recibir pronto más de los suyos.*</p>
+          
+          <p>Muchas gracias y que tenga un excelente día.</p>
+          
+          <p>*Si usted ha pagado mediante transferencia bancaria, sus productos serán procesados una vez que hayamos confirmado la recepción del pago.</p>
+
+          Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishMembershipLevelThreeUpgradeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Welcome to 3-Star Premium Package " />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Congratulations! You are now 3-Star Member at ExportToChina.com.  </p>
+          <p>You can now enjoy the following benefits for 6 months: </p>
+          <ul>
+            <li>Promotion of up to %s products on ExportToChina.com’s English and Chinese sites</li>
+			<li>Chinese translation and promotion of your company and product info</li>
+			<li>Your own company showroom in English and Chinese</li>
+			<li>Priority listing in search results: Your products will have preference following competitors with 4-Star Packages</li>
+			<li>Access to our exclusive “How to Export to China” tutorial</li>
+			<li>Hot Product Listing: Promotion of up to %s items on the homepage of Huijinkou.comv
+			<li>Enhanced Profile & Brand Exposure</li>
+			<li>Product Alerts</li>
+			<li>Unlimited messaging from China buyers</li>
+			<li>Automatic e-mail alert each time a buyer sends you an inquiry</li>
+          </ul
+          
+          <p>These features provide you larger exposure than a 2-Star package, as well as guidance in the process of entering and expanding your business in China. However, your products will most likely display after 4-Star members. You can upgrade your account anytime to stand out from competitors with additional benefits.</p>
+          <p>Also, remember: adding more products always helps your visibility, so we look forward to receiving more soon.** </p>
+          <p>Many thanks and wishing you an excellent day.</p>
+          <p>Helen</p> 
+          <p> *We will inform you as soon as your company is approved by our team and you can download the tutorial.</p>
+          <p>**If you paid by EFT, your products will be processed once we have confirmed the reception of the payment.</p>
+
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMembershipLevelThreeUpgradeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Bienvenido a su Paquete Premium 3-Star" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado %s,</p>
+          <p>Felicitaciones! Usted es ahora Miembro 3-Star en ExportToChina.com.</p>
+          <p>Ya puede comenzar a disfrutar de los siguientes beneficios por 6 meses: </p>
+          <ul>
+            <li>Promoción de hasta %s productos en los portales en inglés, español y chino de ExportToChina.com</li>
+			<li>Traducción y promoción en chino de la información de su empresa y productos</li>
+			<li>Un showroom propio de su empresa en inglés y chino</li>
+			<li>Prioridad en resultados de búsqueda: sus productos tendrán preferencia a continuación de proveedores con paquetes 4-Star</li>
+			<li>Promoción de hasta %s productos en la homepage de Huijinkou.com</li> 
+			<li>Acceso al manual sobre Exportación a China</li>
+			<li>Perfil Mejorado y Exposición de Marca</li>
+			<li>Alertas de Productos</li>
+			<li>Mensajes ilimitados de compradores chinos</li>
+			<li>Alerta automático por email cada vez que un comprador le envía un mensaje</li>
+          </ul
+          
+          <p>Estos beneficios le brindan mayor visibilidad que un paquete 2-Star, a la vez que información útil para la entrada y expansión de su negocio en China. Sin embargo, tenga en cuenta que sus competidores con paquete 4-Star probablemente aparecerán antes en los resultados de búsqueda. Usted puede obtener un upgrade de su cuenta en cualquier momento para destacarse de sus competidores con beneficios adicionales.</p>
+          <p>También recuerde: añadir más productos siempre aumentará su visibilidad, de modo que esperamos recibir pronto más de los suyos.**</p>
+          <p>Muchas gracias y que tenga un excelente día.</p>
+          <p>Helen</p> 
+          <p>*Le informaremos en cuanto su empresa haya sido aprobada y usted pueda descargar el manual.</p>
+          <p>**Si usted ha pagado mediante transferencia bancaria, sus productos serán procesados una vez que hayamos confirmado la recepción del pago.</p>
+
+          Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishMembershipLevelFourUpgradeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Welcome to 4-Star Premium Package " />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Congratulations! You are now 4-Star Member at ExportToChina.com.  </p>
+          <p>You can now enjoy the following benefits for 6 months: </p>
+          <ul>
+            <li>Promotion of up to %s products on ExportToChina.com’s English and Chinese sites</li> 
+            <li>Chinese translation and promotion of your company and product info</li>
+            <li>Priority listing in search results: Your products will have top preference over your competitors with lower tier packages</li>
+            <li>Unlimited messaging from China buyers</li>
+            <li>Your own company showroom in English and Chinese</li> 
+            <li>Automatic e-mail alert each time a buyer sends you an inquiry</li>
+            <li>Access to our exclusive “How to Export to China” tutorial</li>
+            <li>Hot Product Listing: Promotion of up to %s items on our Homepage</li>
+            <li>Possibility to interact with other ExportToChina.com suppliers</li>
+            <li>Enhanced Profile & Brand Exposure: Add up to 3 images to your product profiles</li>
+          </ul
+          <p>Exclusive 4-Star Member benefits:</p>
+          <ul>
+            <li>Credit Check Certificate issued by the Finance, Credit and International Business Association (FCIB)**</li> 
+            <li>Product Alerts: Your newly posted products will be featured in emails sent to Chinese buyers in your industry</li>
+            <li>A link to your company website on your showroom at ExportToChina.com and Huijinkou.com, and ability to communicate with buyers through your own email account</li>
+            <li>A link to your corporate or product video in your company showroom</li>
+          </ul
+          
+          <p>These features provide you the largest exposure and credibility in front of China buyers, as well as helpful guidance in the process of expanding your business in the China market. </p>
+          <p>Also, remember: adding more products always helps your visibility, so we look forward to receiving more soon.*** </p>
+          <p>Many thanks and wishing you an excellent day.</p>
+          <p>Helen</p> 
+          <p> *We will inform you as soon as your company is approved by our team and you can download the tutorial.</p>
+          <p>**Your credit check certificate will be available in 15 business days.</p>
+          <p>***If you paid by EFT, your products will be processed once we have confirmed the reception of the payment.</p>
+
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMembershipLevelFourUpgradeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Bienvenido a su Paquete Premium 4-Star" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado  %s,</p>
+          <p>Felicitaciones! Usted es ahora Miembro 4-Star en ExportToChina.com.</p>
+          <p>Ya puede comenzar a disfrutar de los siguientes beneficios por 6 meses: </p>
+          <ul>
+            <li>Promoción de hasta %s productos en los portales en inglés, español y chino de ExportToChina.com</li> 
+            <li>Traducción y promoción en chino de la información de su empresa y productos</li> 
+            <li>Prioridad en resultados de búsqueda: sus productos tendrán preferencia por sobre competidores con paquete más bajos</li>  
+            <li>Mensajes ilimitados de compradores chinos</li> 
+            <li>Un showroom propio de su empresa en inglés y chino</li> 
+            <li>Alerta automático por email cada vez que un comprador le envía un mensaje</li> 
+            <li>Acceso a nuestro exclusivo manual “Cómo exportar a China”</li> 
+            <li>Productos Destacados: promoción de hasta %s ítems en nuestra homepage</li> 
+            <li>Posibilidad de interactuar con otros proveedores en ExportToChina.com</li> 
+            <li>Perfil Mejorado & Visibilidad de Marca: añada hasta 3 imágenes, inclusive el logo de marca, al perfil de sus productos</li> 
+          </ul
+          <p>Beneficios exclusivos para Miembros 4-Star:</p>
+          <ul>
+            <li>Certificado de Verificación de Crédito extendido por la Finance, Credit and International Business Association (FCIB)**</li>
+            <li>Alertas de Productos: los nuevos productos que usted añada serán exhibidos en emails enviados a compradores chinos en su rubro</li>
+            <li>Un link a la web de su empresa en su showroom en ExportToChina.com y Huijinkou.com, y posibilidad de interactuar con compradores a través de su propio correo electrónico</li>
+            <li>Link al video de su empresa o producto en su showroom</li> 
+          </ul
+          
+          <p>Estos beneficios le brindan la más alta visibilidad y credibilidad ante compradores chinos, a la vez que información útil para la entrada y expansión de su negocio en China. </p>
+          <p>También recuerde: añadir más productos siempre aumentará su visibilidad, de modo que esperamos recibir pronto más de los suyos.***</p>
+          <p>Muchas gracias y que tenga un excelente día.</p>
+          <p>*Le informaremos en cuanto su empresa haya sido aprobada y usted pueda descargar el manual.</p>
+          <p>**Su certificado estará disponible en 15 días laborables.</p>
+          <p>***Si usted ha pagado mediante transferencia bancaria, sus productos serán procesados una vez que hayamos confirmado la recepción del pago.</p>
+
+          Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="buyerBuyLeadMessageNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Huijinkou Buy Lead &lt;noreply@huijinkou.com&gt;" />
+      <constructor-arg name="subject" value="位海外供应商已经回覆了您的询价单" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>亲爱的采购商：</p>
+          <p>恭喜贵司!一位来自荟进口平台的海外供应商已经回覆了您的询价单。请点击以下超链接进入您的收件箱以查看该供应商的回覆： %s</p>
+          <p>请知悉贵司需以英文回覆该海外供应商。</p>
+          <p>祝愿贵司生意兴隆。</p>
+          <p>来自荟进口团队</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="anonymousBuyLeadMessageNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Huijinkou Buy Lead &lt;noreply@huijinkou.com&gt;" />
+      <constructor-arg name="subject" value="位海外供应商已经回覆了您的询价单" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>亲爱的采购商：</p>
+          <p>恭喜贵司!一位来自荟进口平台的海外供应商已经回覆了您的询价单。请点击以下超链接以查看该供应商的回覆： %s</p>
+          <p>贵司提交公司资料之后即可查看收件箱中供应商的回覆信息。</p>
+          <p>请知悉贵司需以英文回覆该海外供应商。</p>
+          <p>祝愿贵司生意兴隆。</p>
+          <p>来自荟进口团队</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="buyerToEnglishSupplierBuyLeadReplyNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Buy Lead &lt;noreply@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="You have a new message at Export to China" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Congratulations! A buyer from ExportToChina.com has responded back to your message.</p>
+          <p>To reply to the buyer, please access your Inbox on the following link: %s</p>
+          <p>Wishing you the Best of success.</p>
+          <p>The ExportToChina.com team</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="buyerToSpanishSupplierBuyLeadReplyNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="ExportToChina Buy Lead &lt;noreply@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Un comprador de Export to China lo ha contactado" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado %s,</p>
+          <p>Felicitaciones! Un comprador de ExportToChina.com ha respondido a su mensaje.</p>
+          <p>Para responder a este comprador, acceda a su casilla de mensajes haciendo clic en el siguiente enlace:  %s</p>
+          <p>Le deseamos el mayor de los éxitos.</p>
+          <p>El equipo de ExportToChina.com</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="buyLeadAnonymousPartyMessageNotificationEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Huijinkou Buy Lead &lt;noreply@huijinkou.com&gt;" />
+      <constructor-arg name="subject" value="您的购买产品需求已发布在荟进口网站上" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>亲爱的买家：</p>
+          <p>您好！</p>
+          <p>我们很高兴收到您的购买产品需求。我们已经将您的产品需求发布在我们的荟进口网站上 –- 不久，您将会收到来自荟进口网站国外供应商的邮件。</p>
+          <p>如果您还不是荟进口的注册用户，我们非常欢迎您在我们的网站上注册，以享受我们网站用户的独家待遇  -- 并充分利用荟进口提供的各种优秀服务。您可以点击下面的链接进行注册：</p>
+          <p>%s</p>
+          <p>如仍有任何疑问，请随时直接与我们联系，我们将很高兴为您提供服务与帮助  -– 并一如既往地祝愿您事业亨通。</p>
+          <p>诚挚的问候！</p>
+          <p> 荟进口团队</p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishMembershipLevelOneRenewalEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Thank you for renewing your 1-Star Package" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Congratulations! You have renewed your 1-Star Membership at ExportToChina.com. </p>
+          <p>You can continue to enjoy the following benefits for another 6 months: </p>
+          <ul>
+            <li>Promotion of up to %s products on ExportToChina.com’s English and Chinese sites</li>
+            <li>Chinese translation and promotion of your company and product info</li>
+            <li>Your own company showroom in English and Chinese</li>
+            <li>Unlimited messaging from China buyers</li>
+            <li>Automatic e-mail alert each time a buyer sends you an inquiry</li>  
+          </ul>
+          
+          <p>Our 1-Star Package provides the basic features to gain visibility with China buyers searching for your products on our portal and on China search engines. You can upgrade your account at any time to stand out from competitors, as well as access our “How to export to China” tutorial. </p>
+          <p>Also, remember: adding more products always helps your visibility, so we look forward to receiving more soon.* </p>
+          <p>Many thanks and wishing you an excellent day.</p>
+          <p>Helen</p> 
+          <p>*If you paid by EFT, your products will be processed once we have confirmed the reception of the payment.</p> 
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMembershipLevelOneRenewalEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Gracias por renovar su Membresía 1-Star" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado %s,</p>
+          <p>Felicitaciones! Ha renovado su membresía 1-Star en ExportToChina.com.</p>
+          <p>Puede continuar disfrutando de los siguientes beneficios por 6 meses: </p>
+          <ul>
+            <li>Promoción de hasta %s productos en los portales en inglés, español y chino de ExportToChina.com</li>
+            <li>Traducción y promoción en chino de la información de su empresa y productos</li>
+            <li>Un showroom propio de su empresa en inglés y chino</li>
+            <li>Mensajes ilimitados de compradores chinos</li>
+            <li>Notificación automática por email cada vez que un comprador le envía un mensaje</li>  
+          </ul>
+          
+          <p>El Paquete 1-Star le brinda los beneficios básicos para adquirir visibilidad frente a compradores chinos en busca de sus productos en ExportToChina.com. Usted puede obtener un upgrade de su cuenta en cualquier momento para destacarse de su competencia y acceder al manual “Cómo exportar a China”.</p>
+          
+          <p>También recuerde: añadir más productos siempre aumentará su visibilidad, de modo que esperamos recibir pronto más de los suyos.*</p>
+          
+          <p>Muchas gracias y que tenga un excelente día.</p>
+          
+          <p>*Si usted ha pagado mediante transferencia bancaria, sus productos serán procesados una vez que hayamos confirmado la recepción del pago.</p>
+
+          Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishMembershipLevelTwoRenewalEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Thank you for renewing your 2-Star Package" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Congratulations! You have renewed your 2-Star Membership at ExportToChina.com. </p>
+          <p>You can continue to enjoy the following benefits for another 6 months: </p>
+          <ul>
+            <li>Promotion of up to %s products on ExportToChina.com’s English and Chinese sites</li>
+			<li>Chinese translation and promotion of your company and product info</li>
+			<li>Priority listing in search results: Your products will have preference following suppliers with 3 and 4-Star Packages</li>
+			<li>Promotion of up to %s products on the homepage of our China site, Huijinkou.com</li>
+			<li>Access to our Export to China Tutorial</li>
+			<li>Enhanced profile and brand exposure</li>
+			<li>Unlimited messaging from China buyers</li>
+			<li>Your own company showroom in English and Chinese</li>
+			<li>Automatic e-mail alert each time a buyer sends you an inquiry</li>
+          </ul>
+          
+          <p>These features provide additional exposure in the China market including homepage promotion and preference on 1-Star members in search rankings on ExportToChina.com. You can upgrade your account at any time to stand out from competitors, as well as access our “How to export to China” tutorial. </p>         
+          <p>Also, remember: adding more products always helps your visibility, so we look forward to receiving more soon.* </p>
+          <p>Many thanks and wishing you an excellent day.</p>
+          <p>Helen</p> 
+          <p>*If you paid by EFT, your products will be processed once we have confirmed the reception of the payment.</p> 
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMembershipLevelTwoRenewalEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Gracias por renovar su Membresía 2-Star" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado %s,</p>
+          <p>Felicitaciones! Ha renovado su membresía 2-Star en ExportToChina.com.</p>
+          <p>Puede continuar disfrutando de los siguientes beneficios por 6 meses: </p>
+          <ul>
+            <li>Promoción de hasta %s productos en los portales en inglés, español y chino de ExportToChina.com</li>
+			<li>Traducción y promoción en chino de la información de su empresa y productos</li>
+			<li>Prioridad en resultados de búsqueda: sus productos tendrán preferencia a continuación de proveedores con paquetes 3-Star y 4-Star</li>
+			<li>Promoción de hasta %s productos en la homepage de Huijinkou.com</li> 
+			<li>Acceso al manual sobre Exportación a China</li>
+			<li>Perfil Mejorado y Exposición de Marca</li>
+			<li>Mensajes ilimitados de compradores chinos</li>
+			<li>Un showroom propio de su empresa en inglés y chino</li>
+			<li>Alerta automático por email cada vez que un comprador le envía un mensaje</li>
+          </ul>
+          
+          <p>El Paquete 2-Star le brinda presencia adicional en el mercado chino, con Productos Destacados en nuestra homepage y mayor preferencia que miembros 1-Star en los rankings de búsqueda de nuestra web. Usted puede obtener un upgrade de su cuenta en cualquier momento para destacarse de su competencia y acceder al manual “Cómo exportar a China”.</p>
+          
+          <p>También recuerde: añadir más productos siempre aumentará su visibilidad, de modo que esperamos recibir pronto más de los suyos.*</p>
+          
+          <p>Muchas gracias y que tenga un excelente día.</p>
+          
+          <p>*Si usted ha pagado mediante transferencia bancaria, sus productos serán procesados una vez que hayamos confirmado la recepción del pago.</p>
+
+          Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishMembershipLevelThreeRenewalEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Thank you for renewing your 3-Star Package" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Congratulations! You have renewed your 3-Star Membership at ExportToChina.com. </p>
+          <p>You can continue to enjoy the following benefits for another 6 months:  </p>
+          <ul>
+            <li>Promotion of up to %s products on ExportToChina.com’s English and Chinese sites</li>
+			<li>Chinese translation and promotion of your company and product info</li>
+			<li>Your own company showroom in English and Chinese</li>
+			<li>Priority listing in search results: Your products will have preference following competitors with 4-Star Packages</li>
+			<li>Access to our exclusive “How to Export to China” tutorial</li>
+			<li>Hot Product Listing: Promotion of up to %s items on the homepage of Huijinkou.comv
+			<li>Enhanced Profile & Brand Exposure</li>
+			<li>Product Alerts</li>
+			<li>Unlimited messaging from China buyers</li>
+			<li>Automatic e-mail alert each time a buyer sends you an inquiry</li>
+          </ul
+          
+          <p>Our 3-Star Package provides a larger exposure, including homepage promotion, priority listings and a useful tutorial to guide companies in the process of entering and expanding their business in China. You can upgrade your account anytime to take your products to the top of search results and categories, and increase your credibility to stand out from competitors.</p>
+          <p>Also, remember: adding more products always helps your visibility, so we look forward to receiving more soon.* </p>
+          <p>Many thanks and wishing you an excellent day.</p>
+          <p>Helen</p> 
+          <p>*If you paid by EFT, your products will be processed once we have confirmed the reception of the payment.</p>
+
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMembershipLevelThreeRenewalEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Gracias por renovar su Membresía 3-Star" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado %s,</p>
+          <p>Felicitaciones! Ha renovado su membresía 3-Star en ExportToChina.com.</p>
+          <p>Puede continuar disfrutando de los siguientes beneficios por 6 meses: </p>
+          <ul>
+            <li>Promoción de hasta %s productos en los portales en inglés, español y chino de ExportToChina.com</li>
+			<li>Traducción y promoción en chino de la información de su empresa y productos</li>
+			<li>Un showroom propio de su empresa en inglés y chino</li>
+			<li>Prioridad en resultados de búsqueda: sus productos tendrán preferencia a continuación de proveedores con paquetes 4-Star</li>
+			<li>Promoción de hasta %s productos en la homepage de Huijinkou.com</li> 
+			<li>Acceso al manual sobre Exportación a China</li>
+			<li>Perfil Mejorado y Exposición de Marca</li>
+			<li>Alertas de Productos</li>
+			<li>Mensajes ilimitados de compradores chinos</li>
+			<li>Alerta automático por email cada vez que un comprador le envía un mensaje</li>
+          </ul
+          
+          <p>El Paquete 3-Star brinda mayor visibilidad, con mayor promoción en nuestra homepage, ranking preferencial y una práctica guía para orientarlo en el proceso de acceder y expandir sus negocios en China. Usted puede obtener un upgrade de su cuenta en cualquier momento para colocar sus productos en los primeros lugares de los resultados de búsquedas y categorías, y ganar credibilidad para destacarse sobre sus competidores.</p>
+          <p>También recuerde: añadir más productos siempre aumentará su visibilidad, de modo que esperamos recibir pronto más de los suyos.*</p>
+          <p>Muchas gracias y que tenga un excelente día.</p>
+          <p>*Si usted ha pagado mediante transferencia bancaria, sus productos serán procesados una vez que hayamos confirmado la recepción del pago..</p>
+
+          Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="englishMembershipLevelFourRenewalEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Thank you for renewing your 4-Star Package" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Congratulations! You have renewed your 4-Star Membership at ExportToChina.com. </p>
+          <p>You can continue to enjoy the following benefits for another 6 months:  </p>
+          <ul>
+            <li>Promotion of up to 15 products on ExportToChina.com’s English and Chinese sites</li> 
+            <li>Chinese translation and promotion of your company and product info</li>
+            <li>Priority listing in search results: Your products will have top preference over your competitors with lower tier packages</li>
+            <li>Unlimited messaging from China buyers</li>
+            <li>Your own company showroom in English and Chinese</li> 
+            <li>Automatic e-mail alert each time a buyer sends you an inquiry</li>
+            <li>Access to our exclusive “How to Export to China” tutorial</li>
+            <li>Hot Product Listing: Promotion of up to 15 items on our Homepage</li>
+            <li>Possibility to interact with other ExportToChina.com suppliers</li>
+            <li>Enhanced Profile & Brand Exposure: Add up to 3 images to your product profiles</li>
+          </ul
+          <p>Exclusive 4-Star Member benefits:</p>
+          <ul>
+            <li>Credit Check Certificate issued by the Finance, Credit and International Business Association (FCIB)**</li> 
+            <li>Product Alerts: Your newly posted products will be featured in emails sent to Chinese buyers in your industry</li>
+            <li>A link to your company website on your showroom at ExportToChina.com and Huijinkou.com, and ability to communicate with buyers through your own email account</li>
+            <li>A link to your corporate or product video in your company showroom</li>
+          </ul
+          
+          <p>These features provide you the largest exposure and credibility in front of China buyers, as well as helpful guidance in the process of expanding your business in the China market. </p>
+          <p>Also, remember: adding more products always helps your visibility, so we look forward to receiving more soon.* </p>
+          <p>Many thanks and wishing you an excellent day.</p>
+          <p>Helen</p> 
+          <p>*If you paid by EFT, your products will be processed once we have confirmed the reception of the payment.</p>
+
+          Helen Chan<br/>
+          Supplier Support<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="spanishMembershipLevelFourRenewalEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Helen Chan &lt;helenc@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Gracias por renovar su Membresía 4-Star" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Estimado  %s,</p>
+          <p>Felicitaciones! Ha renovado su membresía 4-Star en ExportToChina.com.</p>
+          <p>Puede continuar disfrutando de los siguientes beneficios por 6 meses: </p>
+          <ul>
+            <li>Promoción de hasta 15 productos en los portales en inglés, español y chino de ExportToChina.com</li> 
+            <li>Traducción y promoción en chino de la información de su empresa y productos</li> 
+            <li>Prioridad en resultados de búsqueda: sus productos tendrán preferencia por sobre competidores con paquete más bajos</li>  
+            <li>Mensajes ilimitados de compradores chinos</li> 
+            <li>Un showroom propio de su empresa en inglés y chino</li> 
+            <li>Alerta automático por email cada vez que un comprador le envía un mensaje</li> 
+            <li>Acceso a nuestro exclusivo manual “Cómo exportar a China”</li> 
+            <li>Productos Destacados: promoción de hasta 15 ítems en nuestra homepage</li> 
+            <li>Posibilidad de interactuar con otros proveedores en ExportToChina.com</li> 
+            <li>Perfil Mejorado & Visibilidad de Marca: añada hasta 3 imágenes, inclusive el logo de marca, al perfil de sus productos</li> 
+          </ul
+          <p>Beneficios exclusivos para Miembros 4-Star:</p>
+          <ul>
+            <li>Certificado de Verificación de Crédito extendido por la Finance, Credit and International Business Association (FCIB)**</li>
+            <li>Alertas de Productos: los nuevos productos que usted añada serán exhibidos en emails enviados a compradores chinos en su rubro</li>
+            <li>Un link a la web de su empresa en su showroom en ExportToChina.com y Huijinkou.com, y posibilidad de interactuar con compradores a través de su propio correo electrónico</li>
+            <li>Link al video de su empresa o producto en su showroom</li> 
+          </ul
+          
+          <p>Estos beneficios le brindan la más alta visibilidad y credibilidad ante compradores chinos, a la vez que información útil para la entrada y expansión de su negocio en China. </p>
+          <p>También recuerde: añadir más productos siempre aumentará su visibilidad, de modo que esperamos recibir pronto más de los suyos.*</p>
+          <p>Muchas gracias y que tenga un excelente día.</p>
+          <p>*Si usted ha pagado mediante transferencia bancaria, sus productos serán procesados una vez que hayamos confirmado la recepción del pago.</p>
+
+          Helen Chan<br/>
+          Soporte al Proveedor<br/>
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+    <bean id="newEmployeeEmail" class="com.daugherty.e2c.mail.EmailFactory">
+      <constructor-arg name="fromEmailAddress" value="Administrator &lt;admin@export-to-china.com&gt;" />
+      <constructor-arg name="subject" value="Your account has been created on ExportToChina.com" />
+      <constructor-arg name="bodyTemplate">
+        <value>
+          <![CDATA[
+          <div style="width:600px;">
+          <p>Dear %s,</p>
+          <p>Your account has been created on ExportToChina.com with the username <b>%s</b> and the following roles:</p>
+          <p><b>%s</b></p>
+          <p>You will be contacted by an ExportToChina.com Administrator with your credentials</p>
+          
+          ExportToChina.com<br/>
+          </p>
+          </div>
+        ]]>
+        </value>
+      </constructor-arg>
+    </bean>
+  </beans>
+</beans>

@@ -1,0 +1,2 @@
+SELECT application_parameter_value, application_parameter_name
+FROM application_parameter

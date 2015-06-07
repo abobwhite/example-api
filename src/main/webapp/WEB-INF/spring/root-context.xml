@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+  xmlns:jee="http://www.springframework.org/schema/jee" xmlns:task="http://www.springframework.org/schema/task"
+  xsi:schemaLocation="http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- Root Context: defines shared resources visible to all other web components -->
+
+  <beans profile="local">
+    <bean id="urlBuilder" class="com.daugherty.e2c.domain.UrlBuilder">
+      <constructor-arg name="buyerDomain" value="huijinkou" />
+      <constructor-arg name="globalDomain" value="export-to-china" />
+      <constructor-arg name="buyerSiteUri" value="" />
+      <constructor-arg name="globalSiteUri" value="" />
+    </bean>
+  </beans>
+  <beans profile="dev">
+    <bean id="urlBuilder" class="com.daugherty.e2c.domain.UrlBuilder">
+      <constructor-arg name="buyerDomain" value="dev-huijinkou.daugherty.com" />
+      <constructor-arg name="globalDomain" value="dev-export-to-china.daugherty.com" />
+      <constructor-arg name="buyerSiteUri" value="" />
+      <constructor-arg name="globalSiteUri" value="" />
+    </bean>
+  </beans>
+  <beans profile="test">
+    <bean id="urlBuilder" class="com.daugherty.e2c.domain.UrlBuilder">
+      <constructor-arg name="buyerDomain" value="test-huijinkou.daugherty.com" />
+      <constructor-arg name="globalDomain" value="test-export-to-china.daugherty.com" />
+      <constructor-arg name="buyerSiteUri" value="" />
+      <constructor-arg name="globalSiteUri" value="" />
+    </bean>
+  </beans>
+  <beans profile="qa">
+    <bean id="urlBuilder" class="com.daugherty.e2c.domain.UrlBuilder">
+      <constructor-arg name="buyerDomain" value="qa-test-huijinkou.daugherty.com" />
+      <constructor-arg name="globalDomain" value="qa-test-export-to-china.daugherty.com" />
+      <constructor-arg name="buyerSiteUri" value="" />
+      <constructor-arg name="globalSiteUri" value="" />
+    </bean>
+  </beans>
+  <beans profile="prod">
+    <bean id="urlBuilder" class="com.daugherty.e2c.domain.UrlBuilder">
+      <constructor-arg name="buyerDomain" value="www.huijinkou.com" />
+      <constructor-arg name="globalDomain" value="www.export-to-china.com" />
+      <constructor-arg name="buyerSiteUri" value="" />
+      <constructor-arg name="globalSiteUri" value="" />
+    </bean>
+  </beans>
+
+  <beans profile="local">
+    <!-- Must have spring.profiles.active=local in catalina.properties configuration -->
+    <!--suppress DuplicatedBeanNamesInspection -->
+    <bean id="dataSource" class="com.daugherty.e2c.persistence.data.E2CEmbeddedDatabase"/>
+  </beans>
+  
+  <beans profile="local, dev">
+    <bean id="configurationMap" class="java.util.HashMap">
+      <constructor-arg index="0" type="java.util.Map">
+          <map key-type="java.lang.String" value-type="java.lang.String">
+              <entry key="mode" value="sandbox"/>
+              <entry key="acct1.UserName" value="export2chinatester+dev_api1.gmail.com"/>
+              <entry key="acct1.Password" value="1386966111"/>
+              <entry key="acct1.Signature" value="AFcWxV21C7fd0v3bYYYRCpSSRl31A-6jIDpHD-PptsZYw1T9Th.r3g.m"/>             
+          </map>
+      </constructor-arg>
+    </bean>
+   </beans>
+   
+     <beans profile="test">
+    <bean id="configurationMap" class="java.util.HashMap">
+      <constructor-arg index="0" type="java.util.Map">
+          <map key-type="java.lang.String" value-type="java.lang.String">
+              <entry key="mode" value="sandbox"/>
+              <entry key="acct1.UserName" value="export2chinatester+test_api1.gmail.com"/>
+              <entry key="acct1.Password" value="1386966182"/>
+              <entry key="acct1.Signature" value="AUttnirxdDs0TEL1BobuZzkYS3LnABDEMPHKJUhoYg2X76RdHFVXCz.z"/>             
+          </map>
+      </constructor-arg>
+    </bean>
+   </beans>
+   
+     <beans profile="qa">
+    <bean id="configurationMap" class="java.util.HashMap">
+      <constructor-arg index="0" type="java.util.Map">
+          <map key-type="java.lang.String" value-type="java.lang.String">
+              <entry key="mode" value="sandbox"/>
+              <entry key="acct1.UserName" value="export2chinatester+qa_api1.gmail.com"/>
+              <entry key="acct1.Password" value="1386966262"/>
+              <entry key="acct1.Signature" value="AQirzs9NUondCd.WAjkYwXh5JZlwATomJikH-TbkWVfB0o9PPIqYWKXR"/>             
+          </map>
+      </constructor-arg>
+    </bean>
+   </beans>
+   
+   <beans profile="prod">
+    <bean id="configurationMap" class="java.util.HashMap">
+      <constructor-arg index="0" type="java.util.Map">
+          <map key-type="java.lang.String" value-type="java.lang.String">
+              <entry key="mode" value="live"/>
+              <entry key="acct1.UserName" value="nmuessig_api1.exporttochina.com"/>
+              <entry key="acct1.Password" value="PT8TY5Y3BCMSFNYM"/>
+              <entry key="acct1.Signature" value="Apnv4SmCH66j6Eb5EGJsZDRqDDbUAVewz2M4YbOxTjWu0q1Wz.zGT53z"/>             
+          </map>
+      </constructor-arg>
+    </bean>
+   </beans>
+    
+  <beans profile="dev, test, qa, prod">
+    <!-- Must have spring.profiles.active=dev|test in catalina.properties configuration -->
+    <!--suppress DuplicatedBeanNamesInspection -->
+    <jee:jndi-lookup id="dataSource" jndi-name="jdbc/e2cDB" expected-type="javax.sql.DataSource" />
+  </beans>
+
+  <beans>
+    <bean id="documentUrlFactory" class="com.daugherty.e2c.business.DocumentUrlFactory">
+      <constructor-arg name="urlBuilder" ref="urlBuilder" />
+      <constructor-arg name="uri" value="/e2c-api/documents/" />
+    </bean>
+
+    <mongo:db-factory id="mongoDbFactory" dbname="database" />
+    <mongo:mapping-converter id="converter" />
+    <bean class="org.springframework.data.mongodb.gridfs.GridFsTemplate">
+      <constructor-arg ref="mongoDbFactory" />
+      <constructor-arg ref="converter" />
+    </bean>
+    
+    <bean id="payPalService" class="urn.ebay.api.PayPalAPI.PayPalAPIInterfaceServiceService">
+      <constructor-arg name="configurationMap" ref="configurationMap"/>
+    </bean>
+    
+    <task:executor id="messagingTaskExecutor" pool-size="1" queue-capacity="500" rejection-policy="CALLER_RUNS" />
+  </beans>
+</beans>

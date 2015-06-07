@@ -1,0 +1,3 @@
+SELECT application_parameter_value
+FROM application_parameter
+WHERE application_parameter_name = :name

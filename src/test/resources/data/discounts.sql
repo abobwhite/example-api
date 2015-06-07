@@ -1,0 +1,2 @@
+INSERT INTO discounts (discounts_id, discount_code, discount_amount_type, amount, description, ongoing, special, effective_date, expiration_date, last_modified_by, last_modified_date) 
+  VALUES (100, 'DISCOUNT100', 'P', 10, 'DISCOUNT100', FALSE, FALSE, DATE_SUB( CURRENT_DATE, INTERVAL 3 MONTH ), TO_DATE( '12/31/9999', 'DD/MM/YYYY' ), 'ReferenceDataLoad', CURRENT_TIMESTAMP);
